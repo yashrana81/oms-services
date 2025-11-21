@@ -5,11 +5,9 @@ import com.oms.inventory.service.ProductService;
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!local")
 @RequiredArgsConstructor
 @Slf4j
 public class OrderEventListener {
