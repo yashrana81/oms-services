@@ -31,6 +31,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // Authenticate user and return authentication token
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         User user = userService.login(request.getMobile(), request.getPassword());
@@ -42,5 +43,16 @@ public class AuthController {
                 .build();
         
         return ResponseEntity.ok(response);
+    }
+
+    // Logout user by deactivating the authentication token
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader(value = "Authorization", required = false) String token) {
+        if (token == null || token.isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token required");
+        }
+        
+        userService.logout(token);
+        return ResponseEntity.ok("Logged out successfully");
     }
 }

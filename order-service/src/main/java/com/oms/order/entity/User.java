@@ -37,6 +37,10 @@ public class User {
     @Column(unique = true)
     private String token;
 
+    @Column(name = "token_active", nullable = false)
+    @Builder.Default
+    private Boolean tokenActive = true;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

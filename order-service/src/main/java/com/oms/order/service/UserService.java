@@ -18,7 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    // Authenticates user and generates token
+    // Authenticates user and generates new active token
     @Transactional
     public User login(String mobile, String password) {
         User user = userRepository.findByMobile(mobile)
@@ -30,6 +30,7 @@ public class UserService {
 
         String token = UUID.randomUUID().toString();
         user.setToken(token);
+        user.setTokenActive(true);
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
 
@@ -42,11 +43,23 @@ public class UserService {
             return null;
         }
         return userRepository.findByToken(token)
+                .filter(User::getTokenActive)
                 .map(User::getId)
                 .orElse(null);
     }
 
-    // Creates new user account with initial authentication token
+    // Deactivates user token
+    @Transactional
+    public void logout(String token) {
+        User user = userRepository.findByToken(token)
+                .orElseThrow(() -> new OrderServiceException("Invalid token", HttpStatus.UNAUTHORIZED));
+        
+        user.setTokenActive(false);
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+    }
+
+    // Creates new user account with initial active authentication token
     @Transactional
     public User signup(String name, String mobile, String password) {
         Optional<User> existingUser = userRepository.findByMobile(mobile);
@@ -60,6 +73,7 @@ public class UserService {
                 .mobile(mobile)
                 .password(password)
                 .token(UUID.randomUUID().toString())
+                .tokenActive(true)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

@@ -19,6 +19,7 @@ public class ProductsController {
     private final ProductService productService;
     private final ProductMapper productMapper;
 
+    // Fetch product details by product ID
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
         return productService.getProductById(id)
@@ -27,12 +28,14 @@ public class ProductsController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Fetch all products with optional filter for in-stock items only
     @GetMapping
     public ResponseEntity<List<ProductResponse>> getAllProducts(@RequestParam(required = false, defaultValue = "false") boolean inStockOnly) {
         List<Product> products = productService.getAllProducts(inStockOnly);
         return ResponseEntity.ok(productMapper.toResponseList(products));
     }
 
+    // Fetch all products by category
     @GetMapping("/category/{category}")
     public ResponseEntity<List<ProductResponse>> getProductsByCategory(@PathVariable String category) {
         List<Product> products = productService.getProductsByCategory(category);
