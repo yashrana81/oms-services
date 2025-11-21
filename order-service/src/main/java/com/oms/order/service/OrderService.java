@@ -54,7 +54,7 @@ public class OrderService {
         try {
             inventoryClient.reserveStock(request.getProductId(), request.getQuantity());
         } catch (Exception ex) {
-            log.error("Failed to reserve stock for product {}", request.getProductId(), ex);
+            log.error("[ORDER SERVICE] Stock reservation failed for product {}", request.getProductId(), ex);
             throw new OrderServiceException("Unable to reserve stock. Product may be out of stock or unavailable", HttpStatus.BAD_REQUEST);
         }
 
@@ -85,7 +85,7 @@ public class OrderService {
         } catch (OrderServiceException ex) {
             throw ex;
         } catch (Exception ex) {
-            log.error("Database error while fetching order: {}", orderId, ex);
+            log.error("DB error fetching order {}", orderId, ex);
             throw new OrderServiceException("Unable to fetch order. Please try again later", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -100,6 +100,7 @@ public class OrderService {
 
         try {
             Order updatedOrder = orderRepository.save(order);
+            log.info("Order cancelled successfully. OrderId: {}", orderId);
 
             OrderEvent event = OrderEvent.builder()
                     .eventType("CANCEL_ORDER")
@@ -112,7 +113,7 @@ public class OrderService {
 
             return updatedOrder;
         } catch (Exception ex) {
-            log.error("Database error while cancelling order: {}", orderId, ex);
+            log.error("DB error cancelling order {}", orderId, ex);
             throw new OrderServiceException("Unable to cancel order. Please try again later", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -127,7 +128,7 @@ public class OrderService {
         } catch (OrderServiceException ex) {
             throw ex;
         } catch (Exception ex) {
-            log.error("Database error while fetching order: {}", orderId, ex);
+            log.error("DB error fetching order {}", orderId, ex);
             throw new OrderServiceException("Unable to fetch order. Please try again later", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -150,7 +151,7 @@ public class OrderService {
         try {
             return orderRepository.save(order);
         } catch (Exception ex) {
-            log.error("Database error while updating order status for orderId: {}", orderId, ex);
+            log.error("DB error updating order status for order {}", orderId, ex);
             throw new OrderServiceException("Unable to update order status. Please try again later", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

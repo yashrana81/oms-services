@@ -25,8 +25,6 @@ public class InventoryClient {
                 .quantity(quantity)
                 .build();
         
-        log.info("Calling inventory service to reserve stock for product {} by {}", productId, quantity);
         restTemplate.postForObject(url, request, Void.class);
-        log.info("Stock reserved successfully for product {}", productId);
     }
 }

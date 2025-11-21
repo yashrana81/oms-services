@@ -16,7 +16,7 @@ public class OrderEventListener {
 
     private final ProductService productService;
 
-    @SqsListener("${aws.sqs.queue.name:order-events-queue}")
+    @SqsListener("${SQS_QUEUE_NAME:order-events-queue}")
     public void handleOrderEvent(OrderEvent event) {
         log.info("Received event: {}", event);
 

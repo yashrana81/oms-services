@@ -25,10 +25,9 @@ public class OrderEventPublisher {
         
         try {
             sqsTemplate.send(queueName, event);
-            log.info("Published CANCEL_ORDER event to SQS for orderId: {}", event.getOrderId());
+            log.info("Published CANCEL_ORDER event to SQS queue: {} for orderId: {}", queueName, event.getOrderId());
         } catch (Exception e) {
-            log.error("Failed to publish CANCEL_ORDER event for orderId: {}", event.getOrderId(), e);
+            log.error("SQS publish failed for orderId: {} - {}", event.getOrderId(), e.getMessage(), e);
         }
     }
-
 }

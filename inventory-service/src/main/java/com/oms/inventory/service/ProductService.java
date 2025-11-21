@@ -45,7 +45,7 @@ public class ProductService {
         } catch (ProductServiceException ex) {
             throw ex;
         } catch (Exception ex) {
-            log.error("Database error while fetching product for reserve: {}", productId, ex);
+            log.error("DB error fetching product {} for reserve", productId, ex);
             throw new ProductServiceException("Unable to check stock. Please try again later", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

@@ -1,12 +1,10 @@
 package com.oms.inventory.config;
 
 import io.awspring.cloud.sqs.config.SqsMessageListenerContainerFactory;
-import io.awspring.cloud.sqs.support.converter.SqsMessagingMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -21,7 +19,7 @@ public class AwsSqsConfig {
     @Value("${aws.sqs.endpoint:}")
     private String sqsEndpoint;
 
-    @Value("${cloud.aws.region.static:us-east-1}")
+    @Value("${AWS_REGION:ap-south-1}")
     private String region;
 
     @Value("${cloud.aws.credentials.access-key:}")
@@ -43,20 +41,5 @@ public class AwsSqsConfig {
         }
 
         return builder.build();
-    }
-
-    @Bean
-    public SqsMessageListenerContainerFactory<Object> defaultSqsListenerContainerFactory(SqsAsyncClient sqsAsyncClient) {
-        MappingJackson2MessageConverter jackson2Converter = new MappingJackson2MessageConverter();
-        jackson2Converter.setSerializedPayloadClass(String.class);
-        jackson2Converter.setStrictContentTypeMatch(false);
-        
-        SqsMessagingMessageConverter messageConverter = new SqsMessagingMessageConverter();
-        messageConverter.setPayloadMessageConverter(jackson2Converter);
-        
-        return SqsMessageListenerContainerFactory.builder()
-                .sqsAsyncClient(sqsAsyncClient)
-                .configure(options -> options.messageConverter(messageConverter))
-                .build();
     }
 }
